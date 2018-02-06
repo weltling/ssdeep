@@ -1,0 +1,56 @@
+
+# Author: Anatol Belski <ab@php.net>
+#
+# Supported is VC14 and above, lower VC++ versions can be supported by
+# making the compiler options variable, given the source stays C89.
+# The makefile produces a static library with dynamic thread safe CRT
+# linkage.
+
+CC=cl.exe
+AR=lib.exe
+
+SRC=fuzzy.c edit_dist.c find-file-size.c
+
+CFLAGS =  /nologo /Isrc /Isrc\blake2 /Iinclude /W3 /D _WINDOWS /D WIN32
+
+!if "$(PREFIX)" == ""
+PREFIX=build
+!endif
+
+!if "$(DEBUG)" == "1"
+OUT_LIB_NAME = fuzzy_a_debug.lib
+OUT_PDB_NAME = fuzzy_a_debug.pdb
+CFLAGS = $(CFLAGS) /D _DEBUG /Od /Z7 /RTC1 /MDd /Fd$(OUT_PDB_NAME)
+!else
+OUT_LIB_NAME = fuzzy_a.lib
+OUT_PDB_NAME = fuzzy_a.pdb
+CFLAGS = $(CFLAGS) /D NDebug /D NDEBUG /guard:cf /Zc:inline /Gw /MP /MD /Ox /GF /Zi /Fd$(OUT_PDB_NAME)
+!endif
+
+!if "$(MACHINE)" == "x86"
+CFLAGS = $(CFLAGS) /D fseeko=fseek /D ftello=ftell /D fuzzy_off_t=__int32
+!else
+CFLAGS = $(CFLAGS) /D fseeko=_fseeki64 /D ftello=_ftelli64 /D fuzzy_off_t=__int64
+!endif
+
+all: fuzzy_a
+
+fuzzy_a:
+	$(CC) $(CFLAGS) /c fuzzy.c edit_dist.c "find-file-size.c"
+	$(AR) /OUT:$(OUT_LIB_NAME) fuzzy.obj edit_dist.obj "find-file-size.obj"
+
+install: fuzzy_a
+	mkdir $(PREFIX)/include
+	mkdir $(PREFIX)/build/lib
+	copy $(OUT_PDB_NAME) $(PREFIX)/build/lib
+	copy $(OUT_LIB_NAME) $(PREFIX)/build/lib
+	copy fuzzy.h $(PREFIX)/build/include
+	copy edit_dist.h $(PREFIX)/build/include
+
+clean:
+	del *.obj *.lib *.pdb
+	del $(PREFIX)/include/*.h
+	del $(PREFIX)/lib/*.lib
+	rmdir $(PREFIX)/include
+	rmdir $(PREFIX)/lib
+
