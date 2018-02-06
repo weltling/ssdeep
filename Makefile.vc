@@ -47,6 +47,10 @@ ssdeep_exe: fuzzy_a
 	$(LINK) /OUT:ssdeep.exe main.obj match.obj engine.obj filedata.obj dig.obj cycles.obj \
 	helpers.obj ui.obj getopt.obj $(OUT_LIB_NAME) Shell32.lib
 
+sample: fuzzy_a
+	$(CC) $(CFLAGS) /c sample.c
+	$(LINK) /OUT:sample.exe sample.obj $(OUT_LIB_NAME)
+
 install: fuzzy_a ssdeep_exe
 	mkdir $(PREFIX)\include
 	mkdir $(PREFIX)\lib
@@ -58,7 +62,7 @@ install: fuzzy_a ssdeep_exe
 	copy ssdeep.exe $(PREFIX)\bin
 
 clean:
-	del *.obj *.lib *.pdb *.exe
+	del *.obj *.lib *.pdb *.exe *.dat
 	del $(PREFIX)\include\*.h
 	del $(PREFIX)\lib\*.lib
 	del $(PREFIX)\lib\*.pdb
