@@ -124,9 +124,14 @@ typedef struct {
 #define snprintf        _snprintf
 
 char *basename(char *a);
+#ifndef _MSC_VER
 extern char *optarg;
 extern int optind;
 int getopt(int argc, char *const argv[], const char *optstring);
+#else
+/* Native VC implementation provided. */
+#include "getopt.h"
+#endif
 
 #define NEWLINE        "\r\n"
 #define DIR_SEPARATOR  '\\'

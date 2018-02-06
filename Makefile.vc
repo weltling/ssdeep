@@ -8,6 +8,7 @@
 
 CC=cl.exe
 AR=lib.exe
+LINK=link.exe
 
 SRC=fuzzy.c edit_dist.c find-file-size.c
 
@@ -40,9 +41,11 @@ fuzzy_a:
 	$(AR) /OUT:$(OUT_LIB_NAME) fuzzy.obj edit_dist.obj "find-file-size.obj"
 
 ssdeep_exe: fuzzy_a
-	$(CC) $(CFLAGS) /DNOMINMAX=1 /DUNICODE=1 /D_UNICODE=1 /DVERSION="\"1.14.1\"" /Fessdeep.exe \
-	main.cpp match.cpp engine.cpp filedata.cpp dig.cpp cycles.cpp helpers.cpp ui.cpp \
-	/link $(OUT_LIB_NAME) Shell32.lib
+	$(CC) $(CFLAGS) /DNOMINMAX=1 /DUNICODE=1 /D_UNICODE=1 /DVERSION="\"1.14.1\"" /Iwin32 /c \
+	main.cpp match.cpp engine.cpp filedata.cpp dig.cpp cycles.cpp helpers.cpp ui.cpp
+	$(CC) $(CFLAGS) /Iwin32 /c win32\getopt.c
+	$(LINK) /OUT:ssdeep.exe main.obj match.obj engine.obj filedata.obj dig.obj cycles.obj \
+	helpers.obj ui.obj getopt.obj $(OUT_LIB_NAME) Shell32.lib
 
 install: fuzzy_a
 	mkdir $(PREFIX)\include
