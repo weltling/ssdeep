@@ -30,7 +30,9 @@
 #include <errno.h>
 #include <limits.h>
 #include <sys/stat.h>
+#ifndef _MSC_VER
 #include <unistd.h>
+#endif
 #include <ctype.h>
 #include <inttypes.h>
 
