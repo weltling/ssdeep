@@ -19,6 +19,10 @@
 
 
 #include "match.h"
+#include <algorithm>
+#ifdef _MSC_VER
+#include <iso646.h>
+#endif
 
 // The longest line we should encounter when reading files of known hashes 
 #define MAX_STR_LEN  2048

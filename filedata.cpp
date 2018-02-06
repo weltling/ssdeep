@@ -10,6 +10,9 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
+#ifdef _MSC_VER
+#include <iso646.h>
+#endif
 
 
 bool Filedata::valid(void) const

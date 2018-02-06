@@ -12,6 +12,8 @@
 #include "match.h"
 
 #ifdef _WIN32 
+#include <io.h>
+#include <fcntl.h>
 // This can't go in main.h or we get multiple definitions of it
 // Allows us to open standard input in binary mode by default 
 // See http://gnuwin32.sourceforge.net/compile.html for more 

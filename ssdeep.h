@@ -19,6 +19,9 @@
 #include "fuzzy.h"
 #include "tchar-local.h"
 #include "filedata.h"
+#ifdef _MSC_VER
+#include <iso646.h>
+#endif
 
 // This is a kludge, but it works.
 #define __progname "ssdeep"

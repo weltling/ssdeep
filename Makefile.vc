@@ -33,24 +33,29 @@ CFLAGS = $(CFLAGS) /D fseeko=fseek /D ftello=ftell /D fuzzy_off_t=__int32
 CFLAGS = $(CFLAGS) /D fseeko=_fseeki64 /D ftello=_ftelli64 /D fuzzy_off_t=__int64
 !endif
 
-all: fuzzy_a
+all: fuzzy_a ssdeep_exe
 
 fuzzy_a:
 	$(CC) $(CFLAGS) /c fuzzy.c edit_dist.c "find-file-size.c"
 	$(AR) /OUT:$(OUT_LIB_NAME) fuzzy.obj edit_dist.obj "find-file-size.obj"
 
+ssdeep_exe: fuzzy_a
+	$(CC) $(CFLAGS) /DNOMINMAX=1 /DUNICODE=1 /D_UNICODE=1 /DVERSION="\"1.14.1\"" /Fessdeep.exe \
+	main.cpp match.cpp engine.cpp filedata.cpp dig.cpp cycles.cpp helpers.cpp ui.cpp \
+	/link $(OUT_LIB_NAME) Shell32.lib
+
 install: fuzzy_a
-	mkdir $(PREFIX)/include
-	mkdir $(PREFIX)/build/lib
-	copy $(OUT_PDB_NAME) $(PREFIX)/build/lib
-	copy $(OUT_LIB_NAME) $(PREFIX)/build/lib
-	copy fuzzy.h $(PREFIX)/build/include
-	copy edit_dist.h $(PREFIX)/build/include
+	mkdir $(PREFIX)\include
+	mkdir $(PREFIX)\build\lib
+	copy $(OUT_PDB_NAME) $(PREFIX)\build/lib
+	copy $(OUT_LIB_NAME) $(PREFIX)\build/lib
+	copy fuzzy.h $(PREFIX)\build\include
+	copy edit_dist.h $(PREFIX)\build\include
 
 clean:
 	del *.obj *.lib *.pdb
-	del $(PREFIX)/include/*.h
-	del $(PREFIX)/lib/*.lib
-	rmdir $(PREFIX)/include
-	rmdir $(PREFIX)/lib
+	del $(PREFIX)\include\*.h
+	del $(PREFIX)\lib\*.lib
+	rmdir $(PREFIX)\include
+	rmdir $(PREFIX)\lib
 
